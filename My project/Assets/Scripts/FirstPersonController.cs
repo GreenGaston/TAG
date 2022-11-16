@@ -42,6 +42,16 @@ namespace StarterAssets
 		public float GroundedRadius = 0.5f;
 		[Tooltip("What layers the character uses as ground")]
 		public LayerMask GroundLayers;
+		 [Space(10)]
+    	[Header("Against walls")]
+    	[Tooltip("If the character is against a wall or not. Not part of the CharacterController built in grounded check")]
+    	public bool AgainstWall = false;
+   	 	[Tooltip("wallsphere radius")]
+    	public float WallSphereRadius = 0.5f;
+		[Tooltip("wall offset")]
+		public float WallOffset = 0.5f;
+    	[Tooltip("What layers the character uses as walls")]
+    	public LayerMask WallLayers;
 
 		[Header("Cinemachine")]
 		[Tooltip("The follow target set in the Cinemachine Virtual Camera that the camera will follow")]
@@ -114,6 +124,7 @@ namespace StarterAssets
 		{
 			JumpAndGravity();
 			GroundedCheck();
+			AgainstWallCheck();
 			Move();
 		}
 
@@ -128,6 +139,11 @@ namespace StarterAssets
 			Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z);
 			Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers, QueryTriggerInteraction.Ignore);
 		}
+		public void AgainstWallCheck(){
+        	// set sphere position, with offset
+        	Vector3 wallsphere = new Vector3(transform.position.x, transform.position.y+WallOffset, transform.position.z);
+        	AgainstWall = Physics.CheckSphere(wallsphere, WallSphereRadius, WallLayers, QueryTriggerInteraction.Ignore);
+    	}
 
 		private void CameraRotation()
 		{
@@ -245,6 +261,9 @@ namespace StarterAssets
 				_verticalVelocity += Gravity * Time.deltaTime;
 			}
 		}
+
+		
+
 
 		private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
 		{
