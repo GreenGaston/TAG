@@ -19,13 +19,19 @@ namespace StarterAssets
 		[Tooltip("Rotation speed of the character")]
 		public float RotationSpeed = 1.0f;
 		[Tooltip("Acceleration and deceleration")]
-		public float SpeedChangeRate = 10.0f;
+		public float SpeedChangeRate = 1.0f;
 
 		[Space(10)]
 		[Tooltip("The height the player can jump")]
 		public float JumpHeight = 1.2f;
 		[Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
 		public float Gravity = -15.0f;
+		[Tooltip("decreased gravity when up against a wall")]
+		public float WallGravity = -4.0f;
+		[Tooltip("terminal velocity")]
+		public float TerminalVelocity = 53.0f;
+		[Tooltip("terminal velocity when up against a wall")]
+		public float WallTerminalVelocity = 20.0f;
 
 		[Space(10)]
 		[Tooltip("Time required to pass before being able to jump again. Set to 0f to instantly jump again")]
@@ -61,6 +67,31 @@ namespace StarterAssets
 		[Tooltip("How far in degrees can you move the camera down")]
 		public float BottomClamp = -90.0f;
 
+		[Header("wallRunning variables")]
+		public float minimalRunninSpeed = 5f;
+		public float wallRunSpeed = 7f;
+
+		[Header("Detection")]
+		public float wallCheckDistance;
+		public float minDistanceFromFloor;
+		private RaycastHit hitLeft;
+		private RaycastHit hitRight;
+		private bool wallLeft;
+		private bool wallRight;
+
+
+
+		//variable dictating the state of the player
+		public enum PlayerState
+		{
+			Normal,
+			Sprinting,
+			Falling,
+			Sliding,
+			WallRunning
+		}
+		public PlayerState playerState = PlayerState.Normal;
+		
 		// cinemachine
 		private float _cinemachineTargetPitch;
 
@@ -68,7 +99,7 @@ namespace StarterAssets
 		private float _speed;
 		private float _rotationVelocity;
 		private float _verticalVelocity;
-		private float _terminalVelocity = 53.0f;
+		
 
 		// timeout deltatime
 		private float _jumpTimeoutDelta;
@@ -122,10 +153,12 @@ namespace StarterAssets
 
 		private void Update()
 		{
-			JumpAndGravity();
+			
 			GroundedCheck();
 			AgainstWallCheck();
+			DecideState();
 			Move();
+			JumpAndGravity();
 		}
 
 		private void LateUpdate()
@@ -133,6 +166,50 @@ namespace StarterAssets
 			CameraRotation();
 		}
 
+
+		public void DecideState(){
+
+			if (AgainstWall&&!Grounded){
+				if(canWallRide()){
+					playerState = PlayerState.WallRunning;
+					return;
+				}
+			}
+			if (Grounded){
+				if(_input.sprint){
+					playerState = PlayerState.Sprinting;
+				}
+				else{
+					playerState = PlayerState.Normal;
+				}
+			}
+			else if (!Grounded){
+				playerState = PlayerState.Falling;
+			}
+		}
+
+		public bool canWallRide(){
+			//cast out a ray from the players left and right to see if they are against a wall
+			wallLeft=Physics.Raycast(transform.position,transform.TransformDirection(Vector3.left),out hitLeft,wallCheckDistance,WallLayers);
+			wallRight=Physics.Raycast(transform.position,transform.TransformDirection(Vector3.right),out hitRight,wallCheckDistance,WallLayers);
+			//if they are against a wall, check if they are far enough from the ground
+			if (wallLeft||wallRight){
+				if (!Physics.Raycast(transform.position,transform.TransformDirection(Vector3.down),minDistanceFromFloor,WallLayers)){
+					//check if they are moving fast enough perpendicular to the wall
+					if (Vector3.Dot(transform.forward,hitLeft.normal)<-minimalRunninSpeed||Vector3.Dot(transform.forward,hitRight.normal)<-minimalRunninSpeed){
+						return true;
+					}
+					return false;
+				}
+				else{
+					return false;
+				}
+			}
+			else{
+				return false;
+			}
+
+		}
 		private void GroundedCheck()
 		{
 			// set sphere position, with offset
@@ -167,43 +244,40 @@ namespace StarterAssets
 			}
 		}
 
+		private  void MoveNormal(){
+			//
+		}
+
+		private void MoveSliding(){
+			//
+		}
+
+		private void MoveWallRunning(){
+
+		}
 		private void Move()
 		{
-			// set target speed based on move speed, sprint speed and if sprint is pressed
+			
 			float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
+			float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
 
-			// a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
-
-			// note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
-			// if there is no input, set the target speed to 0
+			
 			if (_input.move == Vector2.zero) targetSpeed = 0.0f;
 
-			// a reference to the players current horizontal velocity
-			float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
+			
 
 			float speedOffset = 0.1f;
 			float inputMagnitude = _input.analogMovement ? _input.move.magnitude : 1f;
 
-			// accelerate or decelerate to target speed
-			if (currentHorizontalSpeed < targetSpeed - speedOffset || currentHorizontalSpeed > targetSpeed + speedOffset)
-			{
-				// creates curved result rather than a linear one giving a more organic speed change
-				// note T in Lerp is clamped, so we don't need to clamp our speed
-				_speed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed * inputMagnitude, Time.deltaTime * SpeedChangeRate);
+			
+			_speed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed * inputMagnitude, Time.deltaTime * SpeedChangeRate);
 
-				// round speed to 3 decimal places
-				_speed = Mathf.Round(_speed * 1000f) / 1000f;
-			}
-			else
-			{
-				_speed = targetSpeed;
-			}
-
-			// normalise input direction
+			// round speed to 3 decimal places
+			_speed = Mathf.Round(_speed * 1000f) / 1000f;
+			
 			Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
 
-			// note: Vector2's != operator uses approximation so is not floating point error prone, and is cheaper than magnitude
-			// if there is a move input rotate player when the player is moving
+			
 			if (_input.move != Vector2.zero)
 			{
 				// move
@@ -254,11 +328,16 @@ namespace StarterAssets
 				// if we are not grounded, do not jump
 				_input.jump = false;
 			}
-
-			// apply gravity over time if under terminal (multiply by delta time twice to linearly speed up over time)
-			if (_verticalVelocity < _terminalVelocity)
-			{
-				_verticalVelocity += Gravity * Time.deltaTime;
+			if(AgainstWall && _verticalVelocity < 0 && _verticalVelocity> WallTerminalVelocity){
+				//only apply decreased gravity if we are against a wall and going down
+				_verticalVelocity += WallGravity * Time.deltaTime;
+			}
+			else{
+				// apply gravity over time if under terminal (multiply by delta time twice to linearly speed up over time)
+				if (_verticalVelocity < TerminalVelocity)
+				{
+					_verticalVelocity += Gravity * Time.deltaTime;
+				}
 			}
 		}
 
