@@ -15,6 +15,7 @@ public class StarterAssetsInputs : MonoBehaviour
 	public bool pause;
 	public bool slide;
 
+
 	[Header("Movement Settings")]
 	public bool analogMovement;
 
@@ -38,6 +39,7 @@ public class StarterAssetsInputs : MonoBehaviour
 
 	public void OnJump(InputValue value)
 	{
+		
 		JumpInput(value.isPressed);
 	}
 
@@ -83,5 +85,7 @@ public class StarterAssetsInputs : MonoBehaviour
 		crouch = newCrouchState;
 	}
 
+
+	
 }
 

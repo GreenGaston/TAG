@@ -6,6 +6,7 @@ namespace Movement{
     public enum PlayerState
 		{
 			Normal,
+            Slope,
 			Sprinting,
 			Falling,
 			Sliding,

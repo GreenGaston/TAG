@@ -16,6 +16,9 @@ namespace Movement{
     
 
         public float Gravity = -15f;
+        public float TerminalVelocity = -56f;
+        public float WallGravity = -5f;
+        public float WallTerminalVelocity = -7f;
      
 
 
@@ -44,41 +47,49 @@ namespace Movement{
             // decelerate the _move.xSpeed and _move.zSpeed until they reach the airSpeed
             // calculate the length of the vector
             
-            float was=new Vector3(_move.xSpeed, 0.0f, _move.zSpeed).magnitude;
+            float was=_move.getHorizontalMagnitude();
             bigger=was>airSpeed;
             
             inputDirection = transform.right * _input.move.x + transform.forward * _input.move.y;
             inputDirection*=airAcceleration;
+            // Debug.Log(inputDirection);
             // calculate current speed
             
-            _move.xSpeed+=inputDirection.x;
-            _move.zSpeed+=inputDirection.z;
+            _move.addSpeedGlobal(inputDirection);
             //if the speed is bigger than the airSpeed, normalize the vector and multiply it by the airSpeed
             if(bigger){
-                if(new Vector3(_move.xSpeed, 0.0f, _move.zSpeed).magnitude>was){
-                    Vector3 temp = new Vector3(_move.xSpeed, 0.0f, _move.zSpeed);
-                    temp.Normalize();
-                    temp*=was;
-                    _move.xSpeed=temp.x;
-                    _move.zSpeed=temp.z;
+                if(_move.getHorizontalMagnitude()>was){
+                    //set the speed to what it was before
+                    _move.setHorizontalMagnitude(was);
                 }
-                else{
-                    _move.xSpeed-=airDrag*Time.deltaTime;
-                    _move.zSpeed-=airDrag*Time.deltaTime;
-                }
+
+                _move.setHorizontalMagnitude(Mathf.Max(_move.getHorizontalMagnitude()-airDrag*Time.deltaTime,airSpeed));
+                
             }
             else{ 
-                if(new Vector3(_move.xSpeed, 0.0f, _move.zSpeed).magnitude>airSpeed){
-                    Vector3 temp = new Vector3(_move.xSpeed, 0.0f, _move.zSpeed);
-                    temp.Normalize();
-                    temp*=airSpeed;
-                    _move.xSpeed=temp.x;
-                    _move.zSpeed=temp.z;
+                if(_move.getHorizontalMagnitude()>airSpeed){
+                    _move.setHorizontalMagnitude(airSpeed);
                 }
             }
             
-
-            _move.ySpeed+=Gravity*Time.deltaTime;
+            //gravity
+            if(stateManager.AgainstWall&&_move.getYSpeed()<0){
+                if(_move.getYSpeed()<WallTerminalVelocity){
+                    _move.setYSpeedGlobal(Mathf.Lerp(_move.getYSpeed(),WallTerminalVelocity,Time.deltaTime));
+                }
+                else{
+                    _move.addYSpeedLocal(WallGravity*Time.deltaTime);
+                }
+            }
+            else{
+                if(_move.getYSpeed()<TerminalVelocity){
+                    _move.setYSpeedGlobal(TerminalVelocity);
+                }
+                else{
+                    _move.addYSpeedGlobal(Gravity*Time.deltaTime);
+                }
+                
+            }
             
             
 
