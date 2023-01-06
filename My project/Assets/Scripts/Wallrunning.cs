@@ -8,11 +8,11 @@ namespace Movement{
        
         [Header("speedboost in m/s")]
         public float speedBoost=0f;
-        public float jumpXZ=2;
-        public float jumpY=2;
+        public float jumpY=7;
         public float WallGravity = -4f;
         public float TerminalVelocity = -7f;
         public float WallFriction = 4f;
+        public float jumpAngle=45f;
 
       
         private StateManager stateManager;
@@ -30,7 +30,7 @@ namespace Movement{
         {
             if(stateManager.playerState==PlayerState.WallRunning)
             {       
-              
+                
                
                 WallRun();
             }
@@ -51,7 +51,7 @@ namespace Movement{
             _move.setYSpeedGlobal(0);
             if(_move.getYSpeed()<TerminalVelocity){
                 _move.setYSpeedGlobal(TerminalVelocity);
-                Debug.Log("TerminalVelocity");
+                
             }
             if(_move.getYSpeed()>0){
                 _move.addYSpeedGlobal(WallGravity*Time.deltaTime);
@@ -67,7 +67,8 @@ namespace Movement{
                 
                 _move.addSpeedGlobal(WallDirection1*speedBoost);
             }
-           if(_input.jump){
+            if(_input.jump){
+                Debug.Log("Jumping");
                 WallJump();
             }
 
@@ -77,17 +78,33 @@ namespace Movement{
 
 
         void WallJump(){
-            //we want to jump away from the wall we do this by adding speed to the x and z axis using the normal of the wall
-            // float magnitude=_move.getHorizontalMagnitude();
-            // Vector3 normal=stateManager.wallHit.normal;
-            // _move.xSpeed+=normal.x*jumpXZ;
-            // _move.zSpeed+=normal.z*jumpXZ;
-            // _move.ySpeed+=jumpY;
+        
+            Vector3 WallDirection1=stateManager.WallDirection.normalized;
+            if(Vector3.Dot(_move.getHorizontalVector(), WallDirection1)<0){
+                WallDirection1=-WallDirection1;
+            }
+            Vector3 jumpDirection;
+            if(stateManager.wallLeft){
+                //calculate the horizontal direction of the jump
+                //the direction should be jumpangle degrees to the right or left of the wall depending on which side of the wall the player is on
+                jumpDirection=Quaternion.AngleAxis(jumpAngle, Vector3.up)*WallDirection1;
+            }
+            else{
+                jumpDirection=Quaternion.AngleAxis(-jumpAngle, Vector3.up)*WallDirection1;
+            }
 
-            // //normalize the vector and multiply it by the magnitude
-            // Vector3 newSpeed=new Vector3(_move.xSpeed, 0.0f, _move.zSpeed).normalized*magnitude;
-            // _move.xSpeed=newSpeed.x;
-            // _move.zSpeed=newSpeed.z;
+            //reorient the horizontal direction of the player
+            Vector3 newHorizontalDirection=_move.getHorizontalVector();
+            float length=newHorizontalDirection.magnitude;
+            newHorizontalDirection.x=jumpDirection.x*length;
+            newHorizontalDirection.z=jumpDirection.z*length;
+            newHorizontalDirection.y=jumpY;
+            _move.setSpeedGlobal(newHorizontalDirection);
+
+
+        
+
+            
 
 
 

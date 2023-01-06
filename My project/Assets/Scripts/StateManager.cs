@@ -37,9 +37,11 @@ public class StateManager : MonoBehaviour
         public RaycastHit wallHit;
 		private RaycastHit hitLeft;
 		private RaycastHit hitRight;
-		private bool wallLeft;
-		private bool wallRight;
+        private bool onBooster;
+		public bool wallLeft;
+		public bool wallRight;
         public bool isOnSlope;
+        public GameObject boosterObject;
         
         
         public PlayerState playerState =PlayerState.Normal;
@@ -72,7 +74,10 @@ public class StateManager : MonoBehaviour
 			}
               
 			if (Grounded){
-				
+				if(onBooster){
+                    playerState = PlayerState.Boosting;
+                    return;
+                }
 				playerState = PlayerState.Normal;
 				
 			}
@@ -149,6 +154,31 @@ public class StateManager : MonoBehaviour
 			// set sphere position, with offset
 			Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z);
 			Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers, QueryTriggerInteraction.Ignore);
+            //check if the player is on a booster
+            if(Grounded){
+                //check for boosters
+                Collider[] colliders = Physics.OverlapSphere(spherePosition, GroundedRadius, GroundLayers, QueryTriggerInteraction.Ignore);
+                if(colliders.Length>0){
+                    onBooster=false;
+                    boosterObject=null;
+                    //check if the object is a booster by checking its layer
+                    foreach (Collider col in colliders){
+
+                        if(col.gameObject.layer==LayerMask.NameToLayer("Boosters")){
+                            onBooster=true;
+                            boosterObject=col.gameObject;
+                            break;
+                        }
+
+                    }
+
+                }
+                else{
+                    onBooster=false;
+                    boosterObject=null;
+                }
+            }
+
 		}
 		public void AgainstWallCheck(){
 			// set sphere position, with offset

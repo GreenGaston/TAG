@@ -24,7 +24,7 @@ namespace Movement{
 
         private float _verticalVelocity=0f;
 
-
+        
 
         // Start is called before the first frame update
         void Start()
@@ -37,8 +37,10 @@ namespace Movement{
         {
             if(_controller.playerState==PlayerState.Normal)
             {
+
+
                 if(_controller.previousState==PlayerState.Falling&&_controller.isOnSlope){
-                    Debug.Log(_move.getYSpeed());
+                
                     ConvertFallingSpeed();
                     
                 }
@@ -47,6 +49,8 @@ namespace Movement{
                 Move();
             }
         }
+
+ 
 
 
         private void Move()
@@ -110,7 +114,7 @@ namespace Movement{
             // Jump
             if (_input.jump )
             {
-                Debug.Log("jump");
+            
                
                 // the square root of H * -2 * G = how much velocity needed to reach desired height
                 _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);

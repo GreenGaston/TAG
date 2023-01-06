@@ -1,0 +1,200 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-1928769523074841601
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8b82ebc2a741334bb8c283a5b165d73, type: 3}
+  m_Name: CustomEffectComponent
+  m_EditorClassIdentifier: 
+  active: 0
+  gaussianKernelSize:
+    m_OverrideState: 1
+    m_Value: 10
+  stdev:
+    m_OverrideState: 1
+    m_Value: 2
+  stdevScale:
+    m_OverrideState: 1
+    m_Value: 1.54
+  tau:
+    m_OverrideState: 1
+    m_Value: 1.05
+  thresholding:
+    m_OverrideState: 1
+    m_Value: 1
+  tanh:
+    m_OverrideState: 1
+    m_Value: 1
+  phi:
+    m_OverrideState: 1
+    m_Value: 100
+  threshold:
+    m_OverrideState: 1
+    m_Value: 0.008
+  invert:
+    m_OverrideState: 1
+    m_Value: 0
+  Activation:
+    m_OverrideState: 1
+    m_Value: 1
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7fd9488000d3734a9e00ee676215985, type: 3}
+  m_Name: Global Volume Profile
+  m_EditorClassIdentifier: 
+  components:
+  - {fileID: 8855091598743534912}
+  - {fileID: -1928769523074841601}
+--- !u!114 &8855091598743534912
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5c1059411791ce4387d90caa6227bab, type: 3}
+  m_Name: EDOGVariables
+  m_EditorClassIdentifier: 
+  active: 1
+  superSample:
+    m_OverrideState: 1
+    m_Value: 1
+  useFlow:
+    m_OverrideState: 1
+    m_Value: 1
+  structureTensorDeviation:
+    m_OverrideState: 1
+    m_Value: 2
+  lineIntegralDeviation:
+    m_OverrideState: 1
+    m_Value: 2
+  lineConvolutionStepSizes:
+    m_OverrideState: 1
+    m_Value: {x: 1, y: 1}
+  calcDiffBeforeConvolution:
+    m_OverrideState: 1
+    m_Value: 1
+  differenceOfGaussiansDeviation:
+    m_OverrideState: 1
+    m_Value: 2
+  stdevScale:
+    m_OverrideState: 1
+    m_Value: 1.6
+  Sharpness:
+    m_OverrideState: 1
+    m_Value: 1
+  thresholdMode:
+    m_OverrideState: 1
+    m_Value: 0
+  quantizerStep:
+    m_OverrideState: 1
+    m_Value: 2
+  whitePoint:
+    m_OverrideState: 1
+    m_Value: 50
+  softThreshold:
+    m_OverrideState: 1
+    m_Value: 1
+  invert:
+    m_OverrideState: 1
+    m_Value: 0
+  smoothEdges:
+    m_OverrideState: 1
+    m_Value: 1
+  edgeSmoothDeviation:
+    m_OverrideState: 1
+    m_Value: 1
+  edgeSmoothStepSizes:
+    m_OverrideState: 1
+    m_Value: {x: 1, y: 1}
+  enableHatching:
+    m_OverrideState: 1
+    m_Value: 0
+  hatchTexture:
+    m_OverrideState: 1
+    m_Value: {fileID: 0}
+    dimension: 1
+  hatchResolution:
+    m_OverrideState: 1
+    m_Value: 1
+  hatchRotation:
+    m_OverrideState: 1
+    m_Value: 90
+  enableSecondLayer:
+    m_OverrideState: 1
+    m_Value: 1
+  secondWhitePoint:
+    m_OverrideState: 1
+    m_Value: 20
+  hatchResolution2:
+    m_OverrideState: 1
+    m_Value: 1
+  secondHatchRotation:
+    m_OverrideState: 1
+    m_Value: 60
+  enableThirdLayer:
+    m_OverrideState: 1
+    m_Value: 1
+  thirdWhitePoint:
+    m_OverrideState: 1
+    m_Value: 30
+  hatchResolution3:
+    m_OverrideState: 1
+    m_Value: 1
+  thirdHatchRotation:
+    m_OverrideState: 1
+    m_Value: 120
+  enableFourthLayer:
+    m_OverrideState: 1
+    m_Value: 1
+  fourthWhitePoint:
+    m_OverrideState: 1
+    m_Value: 30
+  hatchResolution4:
+    m_OverrideState: 1
+    m_Value: 1
+  fourthHatchRotation:
+    m_OverrideState: 1
+    m_Value: 120
+  enableColoredPencil:
+    m_OverrideState: 1
+    m_Value: 0
+  brightnessOffset:
+    m_OverrideState: 1
+    m_Value: 0
+  saturation:
+    m_OverrideState: 1
+    m_Value: 1
+  termStrength:
+    m_OverrideState: 1
+    m_Value: 1
+  blendMode:
+    m_OverrideState: 1
+    m_Value: 0
+  minColor:
+    m_OverrideState: 1
+    m_Value: {r: 0, g: 0, b: 0, a: 1}
+  maxColor:
+    m_OverrideState: 1
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
+  blendStrength:
+    m_OverrideState: 1
+    m_Value: 1
+  Activation:
+    m_OverrideState: 1
+    m_Value: 1

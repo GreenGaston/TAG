@@ -145,7 +145,7 @@ namespace Movement{
             
             totalSpeed = movement.magnitude;
             HorizontalSpeed = new Vector3(movement.x, 0, movement.z).magnitude;
-            //Debug.Log("Final: " + movement);
+            
 
         }
         //method to cancel the momentum of the player when they hit a wall

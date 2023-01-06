@@ -7,6 +7,7 @@ namespace Movement{
 		{
 			Normal,
             Slope,
+            Boosting,
 			Sprinting,
 			Falling,
 			Sliding,
