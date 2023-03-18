@@ -76,6 +76,7 @@ public class EDOGPass : ScriptableRenderPass
         //---Custom effect here---
         var customEffect = stack.GetComponent<EDOGVariables>();
         // Only process if the effect is active
+        //Debug.Log(customEffect.IsActive());
         if (customEffect.IsActive())
         {
             //Debug.Log("Custom Effect is active");

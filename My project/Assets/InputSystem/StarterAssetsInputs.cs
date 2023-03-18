@@ -2,19 +2,25 @@ using UnityEngine;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
 #endif
+using Unity.Netcode;
 
-public class StarterAssetsInputs : MonoBehaviour
+public class StarterAssetsInputs : NetworkBehaviour
 {
 	[Header("Character Input Values")]
 	public Vector2 move;
 	public Vector2 look;
+	public Vector2 scroll;
 	public bool jump;
 	public bool sprint;
 	public bool crouch;
 	public bool interact;
 	public bool pause;
 	public bool slide;
-
+	public bool leftMouse;
+	public bool rightMouse;
+	
+	
+	
 
 	[Header("Movement Settings")]
 	public bool analogMovement;
@@ -47,9 +53,68 @@ public class StarterAssetsInputs : MonoBehaviour
 	{
 		SprintInput(value.isPressed);
 	}
+
+	public void OnScroll(InputValue value)
+	{
+		ScrollInput(value.Get<Vector2>());
+
+	}
+	public void OnMouseLeft(InputValue value)
+	{
+		// Debug.Log("Left Mouse:" + value.isPressed );
+		LeftMouse(value.isPressed);
+	}
+	public void OnMouseRight(InputValue value)
+	{
+		RightMouse(value.isPressed);
+	}
+
+	public void OnSliding(InputValue value)
+	{
+		SlideInput(value.isPressed);
+	}
 #endif
 
 
+	void Start(){
+		if(!IsOwner)
+			return;
+		
+		PlayerInput _playerInput = GetComponent<PlayerInput>();
+		//enable this object
+		_playerInput.enabled = true;
+	}
+	void Update(){
+		if(leftMouse){
+			if(Mouse.current.leftButton.wasReleasedThisFrame){
+				//Debug.Log("Left Mouse Released");
+				LeftMouse(false);
+			}
+		}
+		if(rightMouse){
+			if(Mouse.current.rightButton.wasReleasedThisFrame){
+				//Debug.Log("Right Mouse Released");
+				RightMouse(false);
+			}
+		}
+		if(slide){
+			//c key
+			if(Keyboard.current.cKey.wasReleasedThisFrame){
+				//Debug.Log("C Key Released");
+				SlideInput(false);
+			}
+		}
+
+	}
+
+	public void LeftMouse(bool newLeftMouseState)
+	{
+		leftMouse = newLeftMouseState;
+	}
+	public void RightMouse(bool newRightMouseState)
+	{
+		rightMouse = newRightMouseState;
+	}
 	public void MoveInput(Vector2 newMoveDirection)
 	{
 		move = newMoveDirection;
@@ -83,6 +148,22 @@ public class StarterAssetsInputs : MonoBehaviour
 	private void CrouchInput(bool newCrouchState)
 	{
 		crouch = newCrouchState;
+	}
+	private void ScrollInput(Vector2 newScrollState)
+	{
+		// if(newScrollState.y>0){
+		// 	Debug.Log("Scroll Up");
+		// }
+		// if(newScrollState.y<0){
+		// 	Debug.Log("Scroll Down");
+		// }
+		scroll = newScrollState;
+		
+	}
+
+	public void SlideInput(bool newSlideState)
+	{
+		slide = newSlideState;
 	}
 
 

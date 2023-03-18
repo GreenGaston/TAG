@@ -1,4 +1,4 @@
-Shader "Hidden/Dither" {
+Shader "Custom/Dither" {
     Properties {
         _MainTex ("Texture", 2D) = "white" {}
     }

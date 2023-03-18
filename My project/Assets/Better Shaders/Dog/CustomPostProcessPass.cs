@@ -61,20 +61,7 @@ public class CustomPostProcessPass : ScriptableRenderPass
 		// which we will need later
         var stack = VolumeManager.instance.stack;
 
-        #region Local Methods
-
-		// Swaps render destinations back and forth, so that
-		// we can have multiple passes and similar with only a few textures
-        void BlitTo(Material mat, int pass = 0)
-        {
-            var first = latestDest;
-            var last = first == destinationA ? destinationB : destinationA;
-            Blit(cmd, first, last, mat, pass);
-
-            latestDest = last;
-        }
-
-        #endregion
+      
 
 		// Starts with the camera source
         latestDest = source;
