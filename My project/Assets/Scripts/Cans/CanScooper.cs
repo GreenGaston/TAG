@@ -6,10 +6,19 @@ using Unity.Netcode;
 namespace Cans{
     public class CanScooper : NetworkBehaviour
     {
+
+        void Awake(){
+            Debug.Log("CanScooper awake");
+            if(IsOwner){
+                //set tag as "MainUI"
+                gameObject.tag = "Player";
+            }
+        }
         CanApplier canApplier;
         void Start()
         {
-            canApplier = GetComponent<CanApplier>();
+            if(IsOwner)
+                canApplier = GetComponent<CanApplier>();
         }
         //when the player collides with the can
         private void OnTriggerEnter(Collider other)
@@ -36,11 +45,13 @@ namespace Cans{
 
 
         private void handleCan(KindOfCan canKind, int amount=1){
-            canApplier.applyCans(canKind, amount);
+            if(IsOwner)
+                canApplier.applyCans(canKind, amount);
         }
 
         private void handleBottle(){
-            canApplier.applyBottle();
+            if(IsOwner)
+                canApplier.applyBottle();
         }
     }
 }

@@ -19,6 +19,9 @@ namespace Movement{
 
         [SerializeField]
         private GameObject movementHandler;
+
+        [SerializeField]
+        private GameObject player;
         void Start()
         {
             //script enables all components of the player prefab if it is the owner
@@ -39,10 +42,14 @@ namespace Movement{
             //this has the following script that need to be enabled:
             //Finalmove.cs , NormalMovement.cs , AirMovement.cs , CameraScript.cs , StarterAssetsInputs.cs , Wallrunning.cs, Boosting.cs ,Sliding.cs , StateManager.cs
             //and a player input component which needs to be enabled
-            
+            player.GetComponent<Cans.CanApplier>().enabled=true;
+            //player.GetComponent<Cans.CanUI>().enabled=true;
             //enable all components of the player prefab
             GameObject quad=GUI.transform.GetChild(0).GetChild(0).gameObject;
             GameObject camera=GUI.transform.GetChild(0).GetChild(1).gameObject;
+            //second child of camera
+            GameObject CanUI=GUI.transform.GetChild(0).GetChild(1).GetChild(1).gameObject;
+            CanUI.GetComponent<Cans.CanUI>().enabled=true;
             quad.GetComponent<MeshRenderer>().enabled=true;
             camera.GetComponent<Camera>().enabled=true;
             maincamera.GetComponent<Camera>().enabled=true;

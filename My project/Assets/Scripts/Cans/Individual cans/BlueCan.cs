@@ -24,8 +24,8 @@ public class BlueCan : NetworkBehaviour, Can
     // Start is called before the first frame update
     void Start()
     {
-        //get normal movement script from player tag object child
-        normalMovement = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<Movement.NormalMovement>();
+        //normal movement is in child of parent of this object
+        normalMovement = transform.parent.GetComponentInChildren<Movement.NormalMovement>();
     }
 
     // Update is called once per frame

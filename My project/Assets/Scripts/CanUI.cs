@@ -1,9 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 namespace Cans{
-    public class CanUI : MonoBehaviour
+    public class CanUI : NetworkBehaviour
     {
+        int test=0;
+        void Awake(){
+            if(IsOwner){
+                //set tag as "MainUI"
+                gameObject.tag = "UI";
+            }
+        }
 
         public GameObject redCanUI;
         public GameObject blueCanUI;

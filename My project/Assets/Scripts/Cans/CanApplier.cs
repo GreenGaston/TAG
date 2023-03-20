@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 //import array
 using System;
 
 namespace Cans{
-    public class CanApplier : MonoBehaviour
+    public class CanApplier : NetworkBehaviour
     {
 
         
@@ -41,8 +42,9 @@ namespace Cans{
 
         private CanUI canUI;
         void Start(){
-            //component has ui as tag   
-            canUI = GameObject.FindGameObjectWithTag("UI").GetComponent<CanUI>();
+            
+            //can ui is in child of child of child of child of child of child of this object
+            canUI = GetComponentInChildren<CanUI>();
             //get cans from children
             _input = GetComponentInChildren<StarterAssetsInputs>();
             Can empty= GetComponentInChildren<EmptyCan>();
