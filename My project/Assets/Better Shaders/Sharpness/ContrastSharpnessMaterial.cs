@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[System.Serializable, CreateAssetMenu(fileName = "ContrastSharpnessMaterials", menuName = "ContrastSharpnessMaterials")]
+//[System.Serializable, CreateAssetMenu(fileName = "ContrastSharpnessMaterials", menuName = "ContrastSharpnessMaterials")]
 public class ContrastSharpnessMaterials : UnityEngine.ScriptableObject
 {
     //---Your Materials---

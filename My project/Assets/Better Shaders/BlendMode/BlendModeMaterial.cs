@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[System.Serializable, CreateAssetMenu(fileName = "BlendModeMaterial", menuName = "BlendModeMaterial")]
+//[System.Serializable, CreateAssetMenu(fileName = "BlendMode")]
 public class BlendModeMaterial : UnityEngine.ScriptableObject
 {
     //---Your Materials---
@@ -19,20 +19,14 @@ public class BlendModeMaterial : UnityEngine.ScriptableObject
 
         
             Material customEffect = Resources.Load<Material>("BlendMode");
-            if (customEffect == null)
-            {
-                Debug.Log("FUCK");
-                return null;
-            }
+         
             //convert the material to a CustomPostProcessingMaterials
             _instance = CreateInstance<BlendModeMaterial>();
 
             //set the material to the instance
             _instance.customEffect = customEffect;
 
-            if(_instance == null)
-                Debug.Log("FUCK2");
-
+         
             return _instance;
         }
     }

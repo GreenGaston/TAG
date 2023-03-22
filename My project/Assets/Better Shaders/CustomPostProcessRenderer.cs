@@ -1,11 +1,12 @@
 using UnityEngine.Rendering.Universal;
 //import to use debug.log
 using UnityEngine;
+using System.Collections;
 
 [System.Serializable]
-public class CustomPostProcessRenderer : ScriptableRendererFeature
+public class CustomPostProcessRenderer : ScriptableRendererFeature 
 {
-    CustomPostProcessPass pass;
+    DoGPass pass;
     EDOGPass pass2;
     GoochPass pass3;
     DitheringPass pass4;
@@ -26,9 +27,10 @@ public class CustomPostProcessRenderer : ScriptableRendererFeature
     SharpnessPass pass19;
     ZoomPass pass20;
     ToneMappingPass pass21;
+    GameObject GlobalVolume;
     public override void Create()
     {
-        pass = new CustomPostProcessPass();
+        pass = new DoGPass();
         pass2 = new EDOGPass();
         pass3 = new GoochPass();
         pass4 = new DitheringPass();
@@ -49,13 +51,14 @@ public class CustomPostProcessRenderer : ScriptableRendererFeature
         pass19 = new SharpnessPass();
         pass20 = new ZoomPass();
         pass21 = new ToneMappingPass();
-
+        GlobalVolume=GameObject.FindGameObjectWithTag("GlobalVolume");
         
     }
     
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
-        //Debug.Log("Adding Render Passes");	
+        //github copilot are you there?
+        
         renderer.EnqueuePass(pass);
         renderer.EnqueuePass(pass2);
         renderer.EnqueuePass(pass3);

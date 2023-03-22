@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-[Serializable, VolumeComponentMenuForRenderPipeline("Custom/ToneMappingVariables", typeof(UniversalRenderPipeline))]
+[Serializable, VolumeComponentMenuForRenderPipeline("Custom/ToneMapping", typeof(UniversalRenderPipeline))]
 public class ToneMappingVariables : VolumeComponent, IPostProcessComponent
 {
 	public ClampedIntParameter mode = new ClampedIntParameter(1, 1, 11);

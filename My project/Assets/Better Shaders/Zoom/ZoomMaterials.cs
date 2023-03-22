@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[System.Serializable, CreateAssetMenu(fileName = "ZoomMaterials", menuName = "ZoomMaterials")]
+//[System.Serializable, CreateAssetMenu(fileName = "ZoomMaterials", menuName = "ZoomMaterials")]
 public class ZoomMaterials : UnityEngine.ScriptableObject
 {
     //---Your Materials---
@@ -19,19 +19,13 @@ public class ZoomMaterials : UnityEngine.ScriptableObject
 
             //get the material called "DoG" from the resources folder
             Material customEffect = Resources.Load<Material>("Zoom");
-            if (customEffect == null)
-            {
-                Debug.Log("FUCK");
-                return null;
-            }
+     
             //convert the material to a CustomPostProcessingMaterials
             _instance = CreateInstance<ZoomMaterials>();
 
             //set the material to the instance
             _instance.customEffect = customEffect;
 
-            if(_instance == null)
-                Debug.Log("FUCK2");
 
             return _instance;
         }

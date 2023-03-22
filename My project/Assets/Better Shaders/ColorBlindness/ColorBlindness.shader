@@ -41,7 +41,7 @@ Shader "Hidden/ColorBlindess" {
             #pragma vertex vp
             #pragma fragment fp
 
-            #include "Assets/Better Shaders/Protanomaly.cginc"
+            #include "Assets/Better Shaders/ColorBlindness/Protanomaly.cginc"
 
             float4 fp(v2f i) : SV_Target {
                 float4 col = tex2D(_MainTex, i.uv);
@@ -72,7 +72,7 @@ Shader "Hidden/ColorBlindess" {
             #pragma vertex vp
             #pragma fragment fp
 
-            #include "Assets/Better Shaders/Deuteranomaly.cginc"
+            #include "Assets/Better Shaders/ColorBlindness/Deuteranomaly.cginc"
 
             float4 fp(v2f i) : SV_Target {
                 float4 col = tex2D(_MainTex, i.uv);
@@ -103,7 +103,7 @@ Shader "Hidden/ColorBlindess" {
             #pragma vertex vp
             #pragma fragment fp
 
-            #include "Assets/Better Shaders/Tritanomaly.cginc"
+            #include "Assets/Better Shaders/ColorBlindness/Tritanomaly.cginc"
 
             float4 fp(v2f i) : SV_Target {
                 float4 col = tex2D(_MainTex, i.uv);

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[System.Serializable, CreateAssetMenu(fileName = "GoochMaterial", menuName = "GoochMaterial")]
+//[System.Serializable, CreateAssetMenu(fileName = "GoochMaterial", menuName = "GoochMaterial")]
 public class GoochMaterial : UnityEngine.ScriptableObject
 {
     //---Your Materials---
@@ -19,19 +19,13 @@ public class GoochMaterial : UnityEngine.ScriptableObject
 
             //get the material called "DoG" from the resources folder
             Material customEffect = Resources.Load<Material>("Gooch");
-            if (customEffect == null)
-            {
-                Debug.Log("FUCK");
-                return null;
-            }
+     
             //convert the material to a CustomPostProcessingMaterials
             _instance = CreateInstance<GoochMaterial>();
 
             //set the material to the instance
             _instance.customEffect = customEffect;
 
-            if(_instance == null)
-                Debug.Log("FUCK2");
 
             return _instance;
         }

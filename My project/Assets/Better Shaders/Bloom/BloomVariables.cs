@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-[Serializable, VolumeComponentMenuForRenderPipeline("Custom/BloomVariables", typeof(UniversalRenderPipeline))]
+[Serializable, VolumeComponentMenuForRenderPipeline("Custom/Bloom", typeof(UniversalRenderPipeline))]
 public class BloomVariables : VolumeComponent, IPostProcessComponent
 {
     public ClampedFloatParameter Threshold = new ClampedFloatParameter(value: 0.0f, min: 0f, max: 10f);

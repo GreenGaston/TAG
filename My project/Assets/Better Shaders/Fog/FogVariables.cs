@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-[Serializable, VolumeComponentMenuForRenderPipeline("Custom/FogVariables", typeof(UniversalRenderPipeline))]
+[Serializable, VolumeComponentMenuForRenderPipeline("Custom/Fog", typeof(UniversalRenderPipeline))]
 public class FogVariables : VolumeComponent, IPostProcessComponent
 {
 	

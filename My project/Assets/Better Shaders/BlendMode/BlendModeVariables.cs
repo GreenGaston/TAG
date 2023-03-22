@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-[Serializable, VolumeComponentMenuForRenderPipeline("Custom/BlendModeVariables", typeof(UniversalRenderPipeline))]
+[Serializable, VolumeComponentMenuForRenderPipeline("Custom/BlendMode", typeof(UniversalRenderPipeline))]
 public class BlendModeVariables : VolumeComponent, IPostProcessComponent
 {
 

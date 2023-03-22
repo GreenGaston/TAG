@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-[Serializable, VolumeComponentMenuForRenderPipeline("Custom/ZoomVariables", typeof(UniversalRenderPipeline))]
+[Serializable, VolumeComponentMenuForRenderPipeline("Custom/Zoom", typeof(UniversalRenderPipeline))]
 public class ZoomVariables : VolumeComponent, IPostProcessComponent
 {
 

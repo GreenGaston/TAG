@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[System.Serializable, CreateAssetMenu(fileName = "BloomMaterials", menuName = "BloomMaterials")]
+//[System.Serializable, CreateAssetMenu(fileName = "BloomMaterials", menuName = "BloomMaterials")]
 public class BloomMaterials : UnityEngine.ScriptableObject
 {
     //---Your Materials---
@@ -19,19 +19,14 @@ public class BloomMaterials : UnityEngine.ScriptableObject
 
             //get the material called "DoG" from the resources folder
             Material customEffect = Resources.Load<Material>("Bloom");
-            if (customEffect == null)
-            {
-                Debug.Log("FUCK");
-                return null;
-            }
+           
             //convert the material to a CustomPostProcessingMaterials
             _instance = CreateInstance<BloomMaterials>();
 
             //set the material to the instance
             _instance.customEffect = customEffect;
 
-            if(_instance == null)
-                Debug.Log("FUCK2");
+            
 
             return _instance;
         }

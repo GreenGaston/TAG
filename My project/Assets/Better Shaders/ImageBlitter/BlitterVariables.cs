@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-[Serializable, VolumeComponentMenuForRenderPipeline("Custom/BlitterVariables", typeof(UniversalRenderPipeline))]
+[Serializable, VolumeComponentMenuForRenderPipeline("Custom/Blitter", typeof(UniversalRenderPipeline))]
 public class BlitterVariables : VolumeComponent, IPostProcessComponent
 {
 	public TextureParameter image = new TextureParameter(null);

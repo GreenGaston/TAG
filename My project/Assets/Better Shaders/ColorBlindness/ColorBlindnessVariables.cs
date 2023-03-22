@@ -1,9 +1,11 @@
+
+
 using System;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-[Serializable, VolumeComponentMenuForRenderPipeline("Custom/ColorBlindnessVariables", typeof(UniversalRenderPipeline))]
+[Serializable, VolumeComponentMenuForRenderPipeline("Custom/ColorBlindness", typeof(UniversalRenderPipeline))]
 public class ColorBlindnessVariables : VolumeComponent, IPostProcessComponent
 {
 

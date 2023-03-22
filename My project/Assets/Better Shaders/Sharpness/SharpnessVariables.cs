@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-[Serializable, VolumeComponentMenuForRenderPipeline("Custom/SharpnessVariables", typeof(UniversalRenderPipeline))]
+[Serializable, VolumeComponentMenuForRenderPipeline("Custom/Sharpness", typeof(UniversalRenderPipeline))]
 public class SharpnessVariables : VolumeComponent, IPostProcessComponent
 {
 	public ClampedFloatParameter Amount = new ClampedFloatParameter(0.0f, -10.0f, 10.0f);
