@@ -9,6 +9,7 @@ TagManager:
   - UI
   - Bottle
   - MenuCamera
+  - GlobalVolume
   layers:
   - Default
   - TransparentFX
