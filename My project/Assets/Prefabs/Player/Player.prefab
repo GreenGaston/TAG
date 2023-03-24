@@ -1051,11 +1051,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speedBoost: 0
-  jumpY: 10
+  jumpY: 7
   WallGravity: -4
   TerminalVelocity: -7
   WallFriction: 4
-  jumpAngle: 45
+  jumpAngle: 30
 --- !u!114 &3337502305463014996
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1085,7 +1085,7 @@ MonoBehaviour:
   JumpHeight: 1.2
   Acceleration: 0.1
   Gravity: -15
-  fallConvertSpeed: 1
+  fallConvertSpeed: 0.6
   parentobject: {fileID: 0}
   StandSphereRadius: 0.5
   StandSphereOffset: 2
