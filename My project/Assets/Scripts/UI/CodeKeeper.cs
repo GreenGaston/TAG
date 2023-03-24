@@ -5,4 +5,5 @@ using UnityEngine;
 public class StringKeeper
 {
     public static  string CodeToConnect="you should not see this";
+    public static string name="Default";
 }

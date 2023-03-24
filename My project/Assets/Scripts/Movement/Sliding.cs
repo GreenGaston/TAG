@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Netcode;
+
 namespace Movement{
-    public class Sliding : NetworkBehaviour
+    public class Sliding : MonoBehaviour
     {
         // Start is called before the first frame update
 
@@ -56,8 +56,7 @@ namespace Movement{
         // Update is called once per frame
         void Update()
         {
-            if(!IsOwner)
-                return;
+            
             if(_stateManager.playerState==PlayerState.StandingUp){
                 StandUp();
             }
@@ -102,10 +101,12 @@ namespace Movement{
             //check sphere if there is space to stand up
             Vector3 sphereCenter=transform.position+Vector3.up*StandSphereOffset;
             Collider[] colliders=Physics.OverlapSphere(sphereCenter,StandSphereRadius);
-            if(colliders.Length>0){
-                _stateManager.playerState=PlayerState.Sliding;
-                return;
-                
+             for(int i=0;i<colliders.Length;i++){
+                //if it isnt a trigger
+                if(!colliders[i].isTrigger){
+                    _stateManager.playerState=PlayerState.Sliding;
+                    return;
+                }
             }
             _characterController.height=previousHeight;
             //_move.MoveImmediately(new Vector3(0,3.5f,0));
@@ -126,7 +127,7 @@ namespace Movement{
             
 
             if(_stateManager.isOnSlope&&!(_move.getYSpeed()<-5f)&&!(_move.getYSpeed()>5f)){
-                _verticalVelocity=-5f;
+                _verticalVelocity=-50f;
                 
                 return;
             }  

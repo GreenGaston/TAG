@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Netcode;
+
 namespace Movement{
-public class StateManager : NetworkBehaviour
+public class StateManager : MonoBehaviour
     {
 
 
@@ -42,6 +42,7 @@ public class StateManager : NetworkBehaviour
 		public bool wallLeft;
 		public bool wallRight;
         public bool isOnSlope;
+        
         public GameObject boosterObject;
         
         
@@ -57,8 +58,7 @@ public class StateManager : NetworkBehaviour
 
         void LateUpdate()
         {
-            if(!IsOwner)
-                return;
+     
             GroundedCheck();
             AgainstWallCheck();
             isOnSlope=onSlope();
@@ -72,18 +72,21 @@ public class StateManager : NetworkBehaviour
 			if (AgainstWall&&!Grounded){
 				if(canWallRide()){
 					playerState = PlayerState.WallRunning;
-					return;
 				}
+                else{
+                    playerState = PlayerState.Falling;
+                    
+                }
 			}
               
 			else if (Grounded){
 				if(onBooster){
                     playerState = PlayerState.Boosting;
-                    return;
+                    
                 }
                 else if(_input.slide){
                     playerState = PlayerState.Sliding;
-                    return;
+                   
                 }
                 else{
 				    playerState = PlayerState.Normal;
@@ -92,7 +95,7 @@ public class StateManager : NetworkBehaviour
 			}
 			else if (!Grounded){
 				playerState = PlayerState.Falling;
-                Debug.Log("falling");
+                //Debug.Log("falling");
 			}
 
             if(previousState==PlayerState.Sliding&&playerState!=PlayerState.Sliding){

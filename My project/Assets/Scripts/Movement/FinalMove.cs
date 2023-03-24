@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Netcode;
+
 namespace Movement{
-    public class FinalMove : NetworkBehaviour
+    public class FinalMove : MonoBehaviour
     {
 
 
@@ -19,6 +19,8 @@ namespace Movement{
         public float HorizontalSpeed;
         public float maximumSpeed = 100f;
         private CharacterController controller;
+        public float speedMultiplier = 1f;
+        public bool ChaserLocked = false;
 
       
 
@@ -139,20 +141,21 @@ namespace Movement{
         }
         void LateUpdate()
         {
-            if(!IsOwner){
-                return;
-            }
+           
 
             //Debug.Log("Final: " + moveDirection);
             //print parent xyz coordinates
             //Debug.Log(transform.parent.position);
-            Vector3 movement = new Vector3(moveDirection.x, moveDirection.y, moveDirection.z);
+            Vector3 movement = new Vector3(moveDirection.x, moveDirection.y, moveDirection.z)*speedMultiplier;
             if(movement.magnitude>maximumSpeed){
                 movement.Normalize();
                 movement*=maximumSpeed;
             }
         
-
+            if(ChaserLocked){
+                //remove horizontal movement
+                movement = new Vector3(0, movement.y, 0);
+            }
             //convert the movement vector to local space
             //movement = transform.InverseTransformDirection(movement);
             controller.Move(movement * Time.deltaTime);

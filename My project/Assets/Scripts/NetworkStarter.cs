@@ -22,6 +22,9 @@ namespace Movement{
 
         [SerializeField]
         private GameObject player;
+
+        [SerializeField]
+        private GameObject chasehandler;
         void Start()
         {
             //script enables all components of the player prefab if it is the owner
@@ -71,6 +74,8 @@ namespace Movement{
             //get the gameobject with the tag MenuCamera and destroy it
             GameObject menuCamera=GameObject.FindGameObjectWithTag("MenuCamera");
             Destroy(menuCamera);
+
+            chasehandler.GetComponent<ChaseHandler>().enabled=true;
 
 
 

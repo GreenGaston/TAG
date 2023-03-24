@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Netcode;
+
 
 namespace Movement{
-    public class Boosting : NetworkBehaviour
+    public class Boosting : MonoBehaviour
     {
         
               private StateManager stateManager;
@@ -19,8 +19,7 @@ namespace Movement{
         // Update is called once per frame
         void Update()
         {
-            if(!IsOwner)
-                return;
+         
             if(stateManager.playerState==PlayerState.Boosting&&stateManager.previousState!=PlayerState.Boosting)
             {   
                 Boost();

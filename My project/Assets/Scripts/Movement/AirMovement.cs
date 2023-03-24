@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Netcode;
+
 namespace Movement{
-    public class AirMovement : NetworkBehaviour
+    public class AirMovement : MonoBehaviour
 
     {
         public float airSpeed = 5f;
@@ -36,8 +36,7 @@ namespace Movement{
         // Update is called once per frame
         void Update()
         {
-            if(!IsOwner)
-                return;
+          
             if(stateManager.playerState==PlayerState.Falling)
             {   
                 AirMove();

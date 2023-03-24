@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Netcode;
+
 namespace Movement{
-    public class Wallrunning : NetworkBehaviour
+    public class Wallrunning : MonoBehaviour
     {
 
        
@@ -29,8 +29,7 @@ namespace Movement{
         // Update is called once per frame
         void Update()
         {
-            if(!IsOwner)
-                return;
+      
             if(stateManager.playerState==PlayerState.WallRunning)
             {       
                 

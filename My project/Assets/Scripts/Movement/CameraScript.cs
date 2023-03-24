@@ -74,6 +74,7 @@ public class CameraScript : MonoBehaviour
 
 	private void Update()
 	{
+		RotationSpeed = SettingsFile.getVariableFloat("sensitivity");
 		CameraRotation();
 
 	}
@@ -86,8 +87,10 @@ public class CameraScript : MonoBehaviour
 	private void CameraRotation()
 	{
 		// if there is an input
+		//Debug.Log("x: " + _input.look.x + " y: " + _input.look.y + " sqrMagnitude: " + _input.look.sqrMagnitude);
 		if (_input.look.sqrMagnitude >= _threshold)
 		{
+			//Debug.Log("Camera Rotation");
 			//Don't multiply mouse input by Time.deltaTime
 			float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
 			

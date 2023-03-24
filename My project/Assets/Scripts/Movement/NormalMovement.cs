@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Netcode;
+
 
 namespace Movement{
-    public class NormalMovement : NetworkBehaviour
+    public class NormalMovement : MonoBehaviour
     {
 
         //reference to the FirstPersonController script
@@ -41,8 +41,7 @@ namespace Movement{
         // Update is called once per frame
         void Update()
         {
-            if(!IsOwner)
-                return;
+           
             if(_controller.playerState==PlayerState.Normal)
             {
 
