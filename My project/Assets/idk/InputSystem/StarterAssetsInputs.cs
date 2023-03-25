@@ -18,6 +18,7 @@ public class StarterAssetsInputs : MonoBehaviour
 	public bool slide;
 	public bool leftMouse;
 	public bool rightMouse;
+	public bool paused;
 	
 	
 	
@@ -28,6 +29,9 @@ public class StarterAssetsInputs : MonoBehaviour
 	[Header("Mouse Cursor Settings")]
 	public bool cursorLocked = true;
 	public bool cursorInputForLook = true;
+
+	public GameObject menuObject;
+	private GameObject menuInstance;
 
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 	public void OnMove(InputValue value)
@@ -40,6 +44,10 @@ public class StarterAssetsInputs : MonoBehaviour
 		if(cursorInputForLook)
 		{
 			LookInput(value.Get<Vector2>());
+		}
+		else{
+			//0 vector
+			LookInput(Vector2.zero);
 		}
 	}
 
@@ -72,6 +80,11 @@ public class StarterAssetsInputs : MonoBehaviour
 	public void OnSliding(InputValue value)
 	{
 		SlideInput(value.isPressed);
+	}
+
+	public void OnPause(InputValue value)
+	{
+		PauseInput(value.isPressed);
 	}
 #endif
 
@@ -162,6 +175,26 @@ public class StarterAssetsInputs : MonoBehaviour
 	public void SlideInput(bool newSlideState)
 	{
 		slide = newSlideState;
+	}
+
+	public void PauseInput(bool newPauseState)
+	{
+		if(newPauseState){
+			if(menuInstance == null){
+				paused = true;
+				menuInstance = Instantiate(menuObject);
+				Cursor.lockState = CursorLockMode.None;
+				Cursor.visible = true;
+				cursorInputForLook = false;
+			}
+			else{
+				paused = false;
+				Destroy(menuInstance);
+				Cursor.lockState = CursorLockMode.Locked;
+				Cursor.visible = false;
+				cursorInputForLook = true;
+			}
+		}
 	}
 
 
