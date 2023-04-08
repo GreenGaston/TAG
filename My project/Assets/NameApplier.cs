@@ -26,6 +26,7 @@ public class NameApplier : NetworkBehaviour
         //set the name
         text.text=newValue.ToString();
     }
+    
     //textmeshpro text object
     public TMP_Text text;
     void Start()

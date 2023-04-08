@@ -39,6 +39,15 @@ namespace Movement{
           
             if(stateManager.playerState==PlayerState.Falling)
             {   
+                Debug.Log("falling");
+                //if the players previous state was normal or sliding and the y speed is negative, set the y speed to 0
+                if(stateManager.previousState==PlayerState.Normal || stateManager.previousState==PlayerState.Sliding){
+                    if(_move.getYSpeed()<0){
+                        Debug.Log("set y speed to 0");
+                        _move.setYSpeedGlobal(0);
+                    }
+                    
+                }
                 AirMove();
                 
             }

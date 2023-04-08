@@ -13,6 +13,8 @@ public class SettingsFile {
     //the dictionary that stores the settings
     private static Dictionary<string,string> settings;
     private static bool fileRead=false;
+
+    public static string[] paths={"Assets\\StreamingAssets\\settings.txt","Drank_Data\\StreamingAssets\\settings.txt","StreamingAssets\\settings.txt"};
     //constructor
  
 
@@ -23,15 +25,21 @@ public class SettingsFile {
         //create the dictionary
         settings=new Dictionary<string,string>();
         
-        //split the file into lines
-        string[] lines=File.ReadAllText("Assets\\settings.txt").Split(new char[]{'\r','\n'},System.StringSplitOptions.RemoveEmptyEntries);
-        //loop through the lines
-        foreach(string line in lines){
-            //split the line into key and value
-            string[] keyvalue=line.Split(new char[]{'='},System.StringSplitOptions.RemoveEmptyEntries);
-            //add the key and value to the dictionary
-            settings.Add(keyvalue[0],keyvalue[1]);
+        for(int i=0;i<paths.Length;i++){
+            if(File.Exists(paths[i])){
+                //split the file into lines
+                string[] lines=File.ReadAllText(paths[i]).Split(new char[]{'\r','\n'},System.StringSplitOptions.RemoveEmptyEntries);
+                //loop through the lines
+                foreach(string line in lines){
+                    //split the line into key and value
+                    string[] keyvalue=line.Split(new char[]{'='},System.StringSplitOptions.RemoveEmptyEntries);
+                    //add the key and value to the dictionary
+                    settings.Add(keyvalue[0],keyvalue[1]);
+                }
+                return;
+            }
         }
+        Debug.LogError("Settings file not found");
 
     }
 

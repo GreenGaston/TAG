@@ -65,6 +65,18 @@ public class BlueCan : NetworkBehaviour, Can
         }
     }
 
+    public void UseCanPermanently(){
+        originalSpeed = normalMovement.SprintSpeed;
+        originalAcceleration = normalMovement.Acceleration;
+        normalMovement.SprintSpeed = originalSpeed * SpeedBoost;
+        normalMovement.Acceleration = originalAcceleration * AccelerationMultiplier;
+    }
+
+    public void UndoCan(){
+        normalMovement.SprintSpeed = originalSpeed;
+        normalMovement.Acceleration = originalAcceleration;
+    }
+
     public void OverDose(){
         if(usingCan){
             //undo all changes

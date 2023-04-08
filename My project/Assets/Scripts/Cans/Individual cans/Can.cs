@@ -8,4 +8,8 @@ public interface Can{
     void OverDose();
     float getDosage();
     KindOfCan getKindOfCan();
+
+    void UseCanPermanently();
+
+    void UndoCan();
 }

@@ -34,6 +34,16 @@ public class RedCan : NetworkBehaviour , Can
         return 0f;
     }
     
+
+    public void UseCanPermanently()
+    {
+        //throw new System.NotImplementedException();
+    }
+
+    public void UndoCan()
+    {
+        //throw new System.NotImplementedException();
+    }
     public KindOfCan getKindOfCan()
     {
         return KindOfCan.Red;

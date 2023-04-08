@@ -27,6 +27,8 @@ namespace Movement{
 
         public float fallConvertSpeed=0.5f;
 
+
+        public float upwardsSpeedCutOff=0.3f;
         
 
         // Start is called before the first frame update
@@ -111,7 +113,10 @@ namespace Movement{
         private void JumpAndGravity()
         {
             // stop our velocity dropping infinitely when grounded
-
+            if(_move.getYSpeed()>upwardsSpeedCutOff){
+                _verticalVelocity =_move.getYSpeed();
+                return;
+            }
            
             
             if (_move.getYSpeed()<0f)

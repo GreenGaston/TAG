@@ -10,6 +10,8 @@ TagManager:
   - Bottle
   - MenuCamera
   - GlobalVolume
+  - TagStarter
+  - TagCollider
   layers:
   - Default
   - TransparentFX

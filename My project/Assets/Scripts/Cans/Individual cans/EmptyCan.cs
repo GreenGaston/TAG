@@ -31,6 +31,16 @@ public class EmptyCan : MonoBehaviour,Can
         
     }
 
+    public void UseCanPermanently()
+    {
+        //throw new System.NotImplementedException();
+    }
+
+    public void UndoCan()
+    {
+        //throw new System.NotImplementedException();
+    }
+
     public KindOfCan getKindOfCan()
     {
         return KindOfCan.None;

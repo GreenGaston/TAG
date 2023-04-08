@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
-
+using TMPro;
 public class ChaseHandler : MonoBehaviour
 {
 
     public enum ChaseState{
         Chaser,
-        Runner
+        Runner,
+        Spectator
     }
     [SerializeField]
     private Movement.FinalMove _Move;
@@ -35,7 +36,19 @@ public class ChaseHandler : MonoBehaviour
 
     public float ChaserSpeedBonus = 1.2f;
 
+    private GameStarter _GameStarter;
+
+    private string name;
+
+
+    void Start(){
+        _GameStarter=GameObject.Find("TagStarter").GetComponent<GameStarter>();
+        //get name from children in parent NameApplier in parent object
+        name=transform.parent.GetComponent<NameApplier>().name.Value.ToString();
+    }
+
     void Update(){
+        name=transform.parent.GetComponent<NameApplier>().name.Value.ToString();
         if(isLocked){
             chaseLockClock+=Time.deltaTime;
             if(chaseLockClock>=chaseLockTime){
@@ -94,6 +107,14 @@ public class ChaseHandler : MonoBehaviour
         
     }
 
+    public void BecomeSpectator(){
+        _Move.speedMultiplier=1f;
+        _ChaseState=ChaseState.Spectator;
+        isChasing=false;
+        hasRunnerSpeed=false;
+        RunnerSpeedClock=0f;
+    }
+
     //collider for when player enters another player's collider
     void OnTriggerEnter(Collider other){
         if(_ChaseState!=ChaseState.Chaser){
@@ -103,12 +124,11 @@ public class ChaseHandler : MonoBehaviour
             return;
         }
         if(other.gameObject.tag=="Player"){
-            //check if its isChaser tag in its tagManager is false
-            TagManager tagManager=other.gameObject.GetComponent<TagManager>();
-            if(!tagManager.isChaser.Value){
-                tagManager.ChaserServerRpc();
-                _TagManager.ChaserServerRpc();
-            }
+            Debug.Log("ChaseHandler: OnTriggerEnter");
+            //let the game starter handle the collision
+            NameApplier temp=other.transform.GetComponent<NameApplier>();
+            string othername=temp.name.Value.ToString();
+            _GameStarter.HandleCollisionServerRpc(name,othername);
         }
     }
 

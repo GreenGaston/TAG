@@ -40,6 +40,13 @@ namespace Cans{
         public float BottleRecovery = 0.5f;
 
 
+
+        public bool NewMovement = false;
+
+
+        public int LastUsedCan = 0;
+
+
         private CanUI canUI;
         void Start(){
             
@@ -84,6 +91,10 @@ namespace Cans{
         }
 
         void Update(){
+
+
+
+            
             if(isPressed){
                 mouseTimer += Time.deltaTime;
                 if(mouseTimer>mouseTimeout){
@@ -134,6 +145,27 @@ namespace Cans{
                 material.SetFloat("_Percentage", currentDosage/MaxDosage);
 
             }
+
+
+
+
+            if(NewMovement){
+                NewCanApplier();
+            }
+            else{
+                OldCanApplier();
+            }
+
+
+        }
+
+
+
+
+
+
+        void OldCanApplier(){
+            //current way of applying cans where multiple cans can be applied at once
             if(_input.leftMouse){
                 if(amountOfCans()>0){
                     if(!isPressed){
@@ -161,14 +193,35 @@ namespace Cans{
                 mouseTimer = 0f;
                 coolDownTimer = 0f;
             }
+            return;
+        }
 
+        void NewCanApplier(){
+            //new way doesnt care for dosage cooldown, or mulitple cans
+            //it only switches between cans
+            if(_input.leftMouse){
+                if(!isPressed){
+                    
+                    RunScriptNew(LastUsedCan, canIndex);
+                    LastUsedCan = canIndex;
+                    isPressed = true;
 
+                }
+            }
 
         }
 
         void RunScript(){
             canArray[canIndex].useCan();
             updateDosage(canArray[canIndex].getDosage());
+        }
+
+        void RunScriptNew(int old, int current){
+            //undo the old can
+            canArray[old].UndoCan();
+            //apply the new can
+            canArray[current].UseCanPermanently();
+
         }
 
         int amountOfCans(){

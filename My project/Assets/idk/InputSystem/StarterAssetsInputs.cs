@@ -94,6 +94,7 @@ public class StarterAssetsInputs : MonoBehaviour
 		PlayerInput _playerInput = GetComponent<PlayerInput>();
 		//enable this object
 		_playerInput.enabled = true;
+		Cursor.lockState = CursorLockMode.Locked;
 	}
 	void Update(){
 		if(leftMouse){

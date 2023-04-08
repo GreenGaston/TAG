@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 using TMPro;
-
+using Unity.Collections;
 public class GameStarter : NetworkBehaviour
 {
 
@@ -11,6 +11,7 @@ public class GameStarter : NetworkBehaviour
     
     public NetworkVariable<bool> started=new NetworkVariable<bool>(false);
 
+    //public NetworkVariable<FixedString64> winner=new NetworkVariable<FixedString64>("");
     public NetworkVariable<float> timeOfGame=new NetworkVariable<float>(0f);
 
     public GameObject UI;
@@ -20,12 +21,32 @@ public class GameStarter : NetworkBehaviour
     //map of players and how much time they have been it
     public Dictionary<string,float> playerTimes=new Dictionary<string, float>();
 
+
+    public NetworkVariable<FixedString64Bytes> currentgamemode=new NetworkVariable<FixedString64Bytes>("Chase");
+
+
+    public Vector3 OutPosition;
+
    
 
     void Update(){
         if(!IsServer){
             return;
         }
+        string gamemode=currentgamemode.Value.ToString();
+        if(gamemode=="Chase"){
+            GameMode1();
+        }
+        else if(gamemode=="Elimination"){
+            GameMode2();
+        }
+
+        
+    }
+
+
+
+    void GameMode1(){
         if(started.Value){
             timeOfGame.Value+=Time.deltaTime;
             if(timeOfGame.Value>=maxTimeOfGame){
@@ -57,7 +78,7 @@ public class GameStarter : NetworkBehaviour
             GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
             foreach(GameObject player in players){
                 //get text from  textmeshpro-text child
-                Debug.Log("GameStarter: Update: player: "+player.name);
+                //Debug.Log("GameStarter: Update: player: "+player.name);
                 string name= player.GetComponentInChildren<TMP_Text>().text;
                 
                 //if the player is not a chaser skip them
@@ -86,8 +107,13 @@ public class GameStarter : NetworkBehaviour
                 playerTimes.Clear();
             }
         }
+    }
 
-        
+    void GameMode2(){
+        //gamemode that ends when all players are tagged they are move out of the game 
+        //and the game ends when all players are out of the game
+        //this game is played once for each player so the game ends when all players have played
+        //then we count the
     }
 
     void OnTriggerEnter(Collider other){
@@ -139,7 +165,66 @@ public class GameStarter : NetworkBehaviour
     }
 
     [ServerRpc]
-    public void StartGameServerRpc(){
+    public void MovePlayerServerRpc(string name,Vector3 pos){
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        foreach(GameObject player in players){
+            if(player.GetComponentInChildren<TMP_Text>().text==name){
+                player.transform.position=pos;
 
+            }
+        }
+    }
+
+
+    //ownership not required
+    [ServerRpc(RequireOwnership = false)]
+    public void HandleCollisionServerRpc(string name1,string name2){
+        Debug.Log("name1: "+name1+"     name2: "+name2);
+        //assumes player1 is a chaser
+        //if the game is not started do nothing
+        if(!started.Value){
+            return;
+        }
+        //if the game is chase
+        if(currentgamemode.Value.ToString()=="Chase"){
+            //if the player is a chaser
+            //set the player to not be a chaser
+
+            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+            foreach(GameObject player in players){
+                if(player.GetComponentInChildren<TMP_Text>().text==name1){
+                    player.GetComponent<TagManager>().ChaserServerRpc();
+                    Debug.Log("GameStarter: HandleCollisionServerRpc: player: "+name1+" is now a chaser");
+                }
+            }
+
+            foreach(GameObject player in players){
+                if(player.GetComponentInChildren<TMP_Text>().text==name2){
+                    player.GetComponent<TagManager>().ChaserServerRpc();
+                    Debug.Log("GameStarter: HandleCollisionServerRpc: player: "+name2+" is now a not a chaser");
+                }
+            }
+            
+        }
+        else if(currentgamemode.Value.ToString()=="Elimination"){
+            //if the the player is not a chaser do nothing
+            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+            foreach(GameObject player in players){
+                if(player.GetComponentInChildren<TMP_Text>().text==name1){
+                    if(!player.GetComponent<TagManager>().isChaser.Value){
+                        return;
+                    }
+                }
+            }
+            //if the player is a chaser move the other player to the out position
+            foreach(GameObject player in players){
+                if(player.GetComponentInChildren<TMP_Text>().text==name2){
+                    player.transform.position=OutPosition;
+                }
+            }
+
+
+        }
+        
     }
 }

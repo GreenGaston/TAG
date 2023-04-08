@@ -19,7 +19,7 @@ namespace Movement{
         public float JumpHeight = 1.2f;
         public float Acceleration = 1f;
 
-        public float Gravity = -15f;
+        public float fallSpeed=-15f;
 
         private float _verticalVelocity = 0f;
 
@@ -122,12 +122,12 @@ namespace Movement{
             // stop our velocity dropping infinitely when grounded     
             if (_move.getYSpeed()<0f)
             {
-                _verticalVelocity = -2f;
+                _verticalVelocity = -15f;
             }
             
 
             if(_stateManager.isOnSlope&&!(_move.getYSpeed()<-5f)&&!(_move.getYSpeed()>5f)){
-                _verticalVelocity=-50f;
+                _verticalVelocity=-15f;
                 
                 return;
             }  

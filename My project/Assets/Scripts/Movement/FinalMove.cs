@@ -22,6 +22,8 @@ namespace Movement{
         public float speedMultiplier = 1f;
         public bool ChaserLocked = false;
 
+        private StateManager stateManager;
+
       
 
         public float getYSpeed(){
@@ -138,6 +140,7 @@ namespace Movement{
         {
             //character controller is on parent object
             controller = GetComponentInParent<CharacterController>();
+            stateManager = GetComponent<StateManager>();
         }
         void LateUpdate()
         {
@@ -158,6 +161,8 @@ namespace Movement{
             }
             //convert the movement vector to local space
             //movement = transform.InverseTransformDirection(movement);
+
+            //if the character is walking
             controller.Move(movement * Time.deltaTime);
 
             //convert the movement vector to local space

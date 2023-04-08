@@ -49,6 +49,7 @@ public class StateManager : MonoBehaviour
         public PlayerState playerState =PlayerState.Normal;
         public PlayerState previousState = PlayerState.Normal;
         public FinalMove _move;
+        public Collider ground;
 
         void Start()
         {
@@ -67,6 +68,9 @@ public class StateManager : MonoBehaviour
             
         }
 
+
+
+  
         public void DecideState(){
             
 			if (AgainstWall&&!Grounded){
@@ -215,7 +219,7 @@ public class StateManager : MonoBehaviour
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position-GroundedOffset*Vector3.up,0.6f);
+            Gizmos.DrawWireSphere(transform.position-GroundedOffset*Vector3.up, GroundedRadius);
         }
 
     }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
+using UnityEngine.UI;
 
 namespace Movement{
         
@@ -48,17 +49,19 @@ namespace Movement{
             player.GetComponent<Cans.CanApplier>().enabled=true;
             //player.GetComponent<Cans.CanUI>().enabled=true;
             //enable all components of the player prefab
-            GameObject quad=GUI.transform.GetChild(0).GetChild(0).gameObject;
-            GameObject camera=GUI.transform.GetChild(0).GetChild(1).gameObject;
-            //second child of camera
-            GameObject CanUI=GUI.transform.GetChild(0).GetChild(1).GetChild(1).gameObject;
-            CanUI.GetComponent<Cans.CanUI>().enabled=true;
-            quad.GetComponent<MeshRenderer>().enabled=true;
-            camera.GetComponent<Camera>().enabled=true;
+            //get child of gui
+            GUI.transform.GetChild(0).GetComponent<Canvas>().enabled=true;
+            
+      
+            
+        
             maincamera.GetComponent<Camera>().enabled=true;
             maincamera.GetComponent<AudioListener>().enabled=true;
             maincamera.GetComponent<Cinemachine.CinemachineBrain>().enabled=true;
             playerFollowCamera.GetComponent<Cinemachine.CinemachineVirtualCamera>().enabled=true;
+      
+            
+            
             movementHandler.GetComponent<FinalMove>().enabled=true;
             movementHandler.GetComponent<NormalMovement>().enabled=true;
             movementHandler.GetComponent<AirMovement>().enabled=true;

@@ -1,0 +1,2 @@
+FOV=97,6
+sensitivity=1

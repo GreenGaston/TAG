@@ -23,6 +23,12 @@ public class LobbyUI : MonoBehaviour
     //input field
     [SerializeField]
     private TMP_InputField text;
+
+    [SerializeField]
+    private Button quitButton;
+
+
+
     async void Awake(){
         
         createRoomButton.onClick.AddListener(async ()=>{
@@ -75,6 +81,13 @@ public class LobbyUI : MonoBehaviour
             }
             
         });
+        quitButton.onClick.AddListener(() => {
+            
+            //quit the application
+            Application.Quit();
+
+        });
+       
     }
 
     async void Start(){

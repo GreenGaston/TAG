@@ -61,6 +61,16 @@ public class GreenCan : NetworkBehaviour  , Can
         }
     }
 
+    public void UseCanPermanently(){
+        originalJumpForce = normalMovement.JumpHeight;
+        normalMovement.JumpHeight = originalJumpForce * JumpBoost;
+    }
+
+
+    public void UndoCan(){
+        normalMovement.JumpHeight = originalJumpForce;
+    }
+
     public void OverDose(){
         if(usingCan){
             
