@@ -72,7 +72,7 @@ public class CameraScript : MonoBehaviour
 
 
 
-	private void Update()
+	private void FixedUpdate()
 	{
 		RotationSpeed = SettingsFile.getVariableFloat("sensitivity");
 		CameraRotation();

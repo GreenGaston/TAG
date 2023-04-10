@@ -27,7 +27,7 @@ namespace Movement{
         }
 
         // Update is called once per frame
-        void Update()
+        void FixedUpdate()
         {
       
             if(stateManager.playerState==PlayerState.WallRunning)
@@ -56,7 +56,7 @@ namespace Movement{
                 
             }
             if(_move.getYSpeed()>0){
-                _move.addYSpeedGlobal(WallGravity*Time.deltaTime);
+                _move.addYSpeedGlobal(WallGravity*Time.fixedDeltaTime);
             }
             // if(_move.ySpeed>TerminalVelocity){
             //     _move.ySpeed+=WallGravity*Time.deltaTime;

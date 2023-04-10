@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 using TMPro;
-public class ChaseHandler : MonoBehaviour
-{
 
-    public enum ChaseState{
+ public enum ChaseState{
         Chaser,
         Runner,
         Spectator
     }
+public class ChaseHandler : MonoBehaviour
+{
+
+   
     [SerializeField]
     private Movement.FinalMove _Move;
     [SerializeField]

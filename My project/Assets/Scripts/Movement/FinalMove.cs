@@ -22,6 +22,9 @@ namespace Movement{
         public float speedMultiplier = 1f;
         public bool ChaserLocked = false;
 
+        public bool lockforframe = false;
+        public int lockforframecounter = 0;
+
         private StateManager stateManager;
 
       
@@ -142,9 +145,16 @@ namespace Movement{
             controller = GetComponentInParent<CharacterController>();
             stateManager = GetComponent<StateManager>();
         }
-        void LateUpdate()
+        void FixedUpdate()
         {
-           
+           if(lockforframe){
+               lockforframecounter++;
+                if(lockforframecounter>20){
+                     lockforframe = false;
+                     lockforframecounter = 0;
+                }
+                return;
+           }
 
             //Debug.Log("Final: " + moveDirection);
             //print parent xyz coordinates
@@ -163,7 +173,7 @@ namespace Movement{
             //movement = transform.InverseTransformDirection(movement);
 
             //if the character is walking
-            controller.Move(movement * Time.deltaTime);
+            controller.Move(movement * Time.fixedDeltaTime);
 
             //convert the movement vector to local space
             

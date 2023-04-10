@@ -34,16 +34,16 @@ namespace Movement{
         }
 
         // Update is called once per frame
-        void Update()
+        void FixedUpdate()
         {
           
             if(stateManager.playerState==PlayerState.Falling)
             {   
-                Debug.Log("falling");
+                //Debug.Log("falling");
                 //if the players previous state was normal or sliding and the y speed is negative, set the y speed to 0
                 if(stateManager.previousState==PlayerState.Normal || stateManager.previousState==PlayerState.Sliding){
                     if(_move.getYSpeed()<0){
-                        Debug.Log("set y speed to 0");
+                        //Debug.Log("set y speed to 0");
                         _move.setYSpeedGlobal(0);
                     }
                     
@@ -62,7 +62,7 @@ namespace Movement{
             bigger=was>airSpeed;
             
             inputDirection = transform.right * _input.move.x + transform.forward * _input.move.y;
-            inputDirection*=airAcceleration;
+            inputDirection*=airAcceleration*Time.fixedDeltaTime;
             // Debug.Log(inputDirection);
             // calculate current speed
             
@@ -74,7 +74,7 @@ namespace Movement{
                     _move.setHorizontalMagnitude(was);
                 }
 
-                _move.setHorizontalMagnitude(Mathf.Max(_move.getHorizontalMagnitude()-airDrag*Time.deltaTime,airSpeed));
+                _move.setHorizontalMagnitude(Mathf.Max(_move.getHorizontalMagnitude()-airDrag*Time.fixedDeltaTime,airSpeed));
                 
             }
             else{ 
@@ -86,10 +86,10 @@ namespace Movement{
             //gravity
             if(stateManager.AgainstWall&&_move.getYSpeed()<0){
                 if(_move.getYSpeed()<WallTerminalVelocity){
-                    _move.setYSpeedGlobal(Mathf.Lerp(_move.getYSpeed(),WallTerminalVelocity,Time.deltaTime));
+                    _move.setYSpeedGlobal(Mathf.Lerp(_move.getYSpeed(),WallTerminalVelocity,Time.fixedDeltaTime));
                 }
                 else{
-                    _move.addYSpeedLocal(WallGravity*Time.deltaTime);
+                    _move.addYSpeedLocal(WallGravity*Time.fixedDeltaTime);
                 }
             }
             else{
@@ -97,7 +97,7 @@ namespace Movement{
                     _move.setYSpeedGlobal(TerminalVelocity);
                 }
                 else{
-                    _move.addYSpeedGlobal(Gravity*Time.deltaTime);
+                    _move.addYSpeedGlobal(Gravity*Time.fixedDeltaTime);
                 }
                 
             }

@@ -248,8 +248,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12c17206013772342b55ed4ce2580380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isChaser:
-    m_InternalValue: 0
+  TagState:
+    m_InternalValue: 1
   chaserModel: {fileID: 8337742619621316957}
   runnerModel: {fileID: 3337502303945384244}
   _ChaseHandler: {fileID: 299460127515971236}
@@ -921,7 +921,7 @@ MonoBehaviour:
   GroundedRadius: 0.5
   GroundLayers:
     serializedVersion: 2
-    m_Bits: 1537
+    m_Bits: 3585
   AgainstWall: 0
   WallSphereRadius: 0.6
   WallOffset: 1
@@ -957,7 +957,7 @@ MonoBehaviour:
   MoveSpeed: 4
   SprintSpeed: 6
   rotationSpeed: 1
-  Acceleration: 0.1
+  Acceleration: 40
   Friction: 0.5
   JumpHeight: 1.28
   Gravity: -15
@@ -976,7 +976,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   airSpeed: 5
-  airAcceleration: 0.05
+  airAcceleration: 20
   airDrag: 0.5
   bigger: 0
   inputDirection: {x: 0, y: 0, z: 0}

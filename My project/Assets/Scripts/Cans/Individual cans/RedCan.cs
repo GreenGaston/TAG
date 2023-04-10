@@ -7,6 +7,9 @@ public class RedCan : NetworkBehaviour , Can
 {
 
     public KindOfCan kindOfCan = KindOfCan.Red;
+
+    //object containing all the walls that need to be disabled
+    private GameObject walls;
     public void useCan()
     {
         Debug.Log("Red Can");
@@ -15,14 +18,10 @@ public class RedCan : NetworkBehaviour , Can
     // Start is called before the first frame update
     void Start()
     {
-        
+        //find the walls by the tag WallDisabler
+        walls=GameObject.FindGameObjectWithTag("WallDisabler");
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     public void OverDose()
     {
@@ -37,12 +36,16 @@ public class RedCan : NetworkBehaviour , Can
 
     public void UseCanPermanently()
     {
-        //throw new System.NotImplementedException();
+        
+        //disable all the walls
+        walls.SetActive(false);
     }
 
     public void UndoCan()
     {
-        //throw new System.NotImplementedException();
+      
+        //enable all the walls
+        walls.SetActive(true);
     }
     public KindOfCan getKindOfCan()
     {

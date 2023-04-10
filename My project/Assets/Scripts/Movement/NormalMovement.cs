@@ -41,7 +41,7 @@ namespace Movement{
         }
 
         // Update is called once per frame
-        void Update()
+        void FixedUpdate()
         {
            
             if(_controller.playerState==PlayerState.Normal)
@@ -85,7 +85,7 @@ namespace Movement{
        
             Vector3 inputDirection = transform.right * _input.move.x + transform.forward * _input.move.y;
          
-            inputDirection*=Acceleration;
+            inputDirection*=Acceleration*Time.fixedDeltaTime;
             
             // calculate current speed
             
@@ -96,7 +96,7 @@ namespace Movement{
                 if(_move.getHorizontalMagnitude()>was){
                     _move.setHorizontalMagnitude(was);
                 }
-                _move.setHorizontalMagnitude(Mathf.Max(_move.getHorizontalMagnitude()-Friction*Time.deltaTime,Speed));
+                _move.setHorizontalMagnitude(Mathf.Max(_move.getHorizontalMagnitude()-Friction*Time.fixedDeltaTime,Speed));
                 
             }
             else{ 
@@ -156,12 +156,12 @@ namespace Movement{
             float lengthInDir=Vector3.Dot(fallingSpeed,groundSlopeDir);
 
             Vector3 speedInDir=groundSlopeDir*lengthInDir*fallConvertSpeed;
-            Debug.Log("speedInDir:"+speedInDir);
+            //Debug.Log("speedInDir:"+speedInDir);
             //add only the horizontal speed to the _move.xSpeed and _move.zSpeed
-            Debug.Log("before:"+_move.getVector());
+            //Debug.Log("before:"+_move.getVector());
 
             _move.addSpeedGlobal(new Vector3(speedInDir.x,0,speedInDir.z));
-            Debug.Log("after:"+_move.getVector());
+            //Debug.Log("after:"+_move.getVector());
             
 
 

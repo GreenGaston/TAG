@@ -57,7 +57,7 @@ public class StateManager : MonoBehaviour
             _input = GetComponent<StarterAssetsInputs>();
         }
 
-        void LateUpdate()
+        void FixedUpdate()
         {
      
             GroundedCheck();

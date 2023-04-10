@@ -7,7 +7,7 @@ using Unity.Collections;
 public class TagManager : NetworkBehaviour
 {
     //store reference to player who is it as a network object
-    public NetworkVariable<bool> isChaser=new NetworkVariable<bool>();
+    public NetworkVariable<ChaseState> TagState=new NetworkVariable<ChaseState>(ChaseState.Runner);
 
     [SerializeField]
     private GameObject chaserModel;
@@ -22,21 +22,23 @@ public class TagManager : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        isChaser.OnValueChanged+= OnIsChaserChanged;
+        TagState.OnValueChanged+= OnIsChaserChanged;
     }
 
     public override void OnNetworkDespawn()
     {
-        isChaser.OnValueChanged-= OnIsChaserChanged;
+        TagState.OnValueChanged-= OnIsChaserChanged;
     }
 
-    public void OnIsChaserChanged(bool oldValue,bool newValue){
-        Debug.Log("TagManager: OnIsChaserChanged");
-        if(newValue&&!oldValue){
+    public void OnIsChaserChanged(ChaseState oldValue,ChaseState newValue){
+        //Debug.Log("TagManager: OnIsChaserChanged    oldValue: "+oldValue+"    newValue: "+newValue+"");
+        if(oldValue!=ChaseState.Chaser&&newValue==ChaseState.Chaser){
+            //Debug.Log("hurray");
             chaserModel.SetActive(true);
             runnerModel.SetActive(false);
         }
-        else if(!newValue&&oldValue){
+        else if(oldValue!=ChaseState.Runner&&newValue==ChaseState.Runner){
+            //Debug.Log("hurray2");
             chaserModel.SetActive(false);
             runnerModel.SetActive(true);
         }
@@ -44,10 +46,10 @@ public class TagManager : NetworkBehaviour
             return;
         }
 
-        if(newValue&&!oldValue){
+        if(oldValue!=ChaseState.Chaser&&newValue==ChaseState.Chaser){
             _ChaseHandler.BecomeChaser();
         }
-        else if(!newValue&&oldValue){
+        else if(oldValue!=ChaseState.Runner&&newValue==ChaseState.Runner){
             _ChaseHandler.BecomeRunner();
         }
         else{
@@ -60,8 +62,8 @@ public class TagManager : NetworkBehaviour
 
 
     [ServerRpc(RequireOwnership = false)]
-    public void ChaserServerRpc(){
-        isChaser.Value=!isChaser.Value;
+    public void ChaserServerRpc(ChaseState chaseState){
+        TagState.Value=chaseState;
     }
 
 }

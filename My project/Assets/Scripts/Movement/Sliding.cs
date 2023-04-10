@@ -54,7 +54,7 @@ namespace Movement{
         }
 
         // Update is called once per frame
-        void Update()
+        void FixedUpdate()
         {
             
             if(_stateManager.playerState==PlayerState.StandingUp){
@@ -148,12 +148,12 @@ namespace Movement{
             float lengthInDir=Vector3.Dot(fallingSpeed,groundSlopeDir);
 
             Vector3 speedInDir=groundSlopeDir*lengthInDir*fallConvertSpeed;
-            Debug.Log("speedInDir:"+speedInDir);
+           // Debug.Log("speedInDir:"+speedInDir);
             //add only the horizontal speed to the _move.xSpeed and _move.zSpeed
-            Debug.Log("before:"+_move.getVector());
+           // Debug.Log("before:"+_move.getVector());
 
             _move.addSpeedGlobal(new Vector3(speedInDir.x,0,speedInDir.z));
-            Debug.Log("after:"+_move.getVector());
+            //Debug.Log("after:"+_move.getVector());
                 
         }
 
@@ -180,7 +180,7 @@ namespace Movement{
                     if(_move.getHorizontalMagnitude()>was){
                         _move.setHorizontalMagnitude(was);
                     }
-                    _move.setHorizontalMagnitude(Mathf.Max(_move.getHorizontalMagnitude()-Friction*Time.deltaTime,MoveSpeed));
+                    _move.setHorizontalMagnitude(Mathf.Max(_move.getHorizontalMagnitude()-Friction*Time.fixedDeltaTime,MoveSpeed));
                     
                 }
                 else{ 

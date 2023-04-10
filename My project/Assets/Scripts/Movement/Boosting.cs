@@ -17,7 +17,7 @@ namespace Movement{
             _move = GetComponent<FinalMove>();
         }
         // Update is called once per frame
-        void Update()
+        void FixedUpdate()
         {
          
             if(stateManager.playerState==PlayerState.Boosting&&stateManager.previousState!=PlayerState.Boosting)

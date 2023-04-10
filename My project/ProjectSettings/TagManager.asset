@@ -12,6 +12,7 @@ TagManager:
   - GlobalVolume
   - TagStarter
   - TagCollider
+  - WallDisabler
   layers:
   - Default
   - TransparentFX

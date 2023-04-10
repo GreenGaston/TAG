@@ -4,6 +4,7 @@ using UnityEngine;
 using Unity.Netcode;
 using TMPro;
 using Unity.Collections;
+using Movement;
 public class GameStarter : NetworkBehaviour
 {
 
@@ -18,19 +19,25 @@ public class GameStarter : NetworkBehaviour
     public GameObject WinnerScreen;
     public float maxTimeOfGame=120f;
 
+    public Transform[] spawnPoints;
+
     //map of players and how much time they have been it
     public Dictionary<string,float> playerTimes=new Dictionary<string, float>();
 
 
-    public NetworkVariable<FixedString64Bytes> currentgamemode=new NetworkVariable<FixedString64Bytes>("Chase");
+    public NetworkVariable<FixedString64Bytes> currentgamemode=new NetworkVariable<FixedString64Bytes>("Elimination");
 
 
     public Vector3 OutPosition;
 
-   
+   void Start(){
+        currentgamemode.Value="Elimination";
+        Debug.Log("GameStarter: Server started, gamemode: "+currentgamemode.Value.ToString());
+       
+   }
 
-    void Update(){
-        if(!IsServer){
+    void FixedUpdate(){
+        if(!IsServer||!started.Value){
             return;
         }
         string gamemode=currentgamemode.Value.ToString();
@@ -68,7 +75,7 @@ public class GameStarter : NetworkBehaviour
                     }
                 }
                 spawnWinnerUIClientRpc(leastTimePlayer);
-                resetChasersClientRpc();
+                resetChasersServerRpc();
                 //set all players to not be chasers
                 return;
 
@@ -82,7 +89,7 @@ public class GameStarter : NetworkBehaviour
                 string name= player.GetComponentInChildren<TMP_Text>().text;
                 
                 //if the player is not a chaser skip them
-                if(!player.GetComponent<TagManager>().isChaser.Value){
+                if(!(player.GetComponent<TagManager>().TagState.Value==ChaseState.Chaser)){
                     continue;
                 }
                 if(playerTimes.ContainsKey(name)){
@@ -95,7 +102,7 @@ public class GameStarter : NetworkBehaviour
 
             bool foundChaser=false;
             foreach(GameObject player in players){
-                if(player.GetComponent<TagManager>().isChaser.Value){
+                if(player.GetComponent<TagManager>().TagState.Value==ChaseState.Chaser){
                     foundChaser=true;
                     break;
                 }
@@ -109,20 +116,227 @@ public class GameStarter : NetworkBehaviour
         }
     }
 
+
+
+
+    public float GameTime=0f;
+    public float GameTimeLimit=180f;
+
+    public float TimeBetweenGames=5f;
     void GameMode2(){
-        //gamemode that ends when all players are tagged they are move out of the game 
-        //and the game ends when all players are out of the game
-        //this game is played once for each player so the game ends when all players have played
-        //then we count the
+        if(waiting){
+            waittimeclock+=Time.deltaTime;
+            if(waittimeclock>=waitTime){
+                waiting=false;
+                waittimeclock=0f;
+                UnlockPlayerClientRpc();
+                Debug.Log("GameStarter: GameMode2: Unlocking players, done waiting");
+            }
+            return;
+        }
+        if(betweenRounds){
+            betweenRoundTimeClock+=Time.deltaTime;
+            if(betweenRoundTimeClock>=betweenRoundTime){
+                betweenRounds=false;
+                betweenRoundTimeClock=0f;
+                StartRoundGameMode2();
+                Debug.Log("GameStarter: GameMode2: Starting round, time between rounds over");
+            }
+            return;
+        }
+        GameTime+=Time.fixedDeltaTime;
+        bool allTagged=true;
+        foreach(bool tag in tagged){
+            if(!tag){
+                allTagged=false;
+                break;
+            }
+        }
+        if(GameTime>=GameTimeLimit||allTagged){
+            Debug.Log("GameStarter: GameMode2: Ending round");
+            //end round
+            GameTime=0f;
+            betweenRounds=true;
+            bool allPlayed=true;
+            foreach(bool played in hasPlayed){
+                if(!played){
+                    allPlayed=false;
+                    break;
+                }
+            }
+            if(allPlayed){
+                Debug.Log("GameStarter: GameMode2: everyone has played, ending game");
+                //end game
+                started.Value=false;
+                //find the player with the least score
+                int leastScore=0;
+                int leastScoreIndex=0;
+                for(int i=0;i<playerScores.Length;i++){
+                    if(i==0){
+                        leastScore=playerScores[i];
+                        leastScoreIndex=i;
+                    }
+                    else{
+                        if(playerScores[i]<leastScore){
+                            leastScore=playerScores[i];
+                            leastScoreIndex=i;
+                        }
+                    }
+                }
+                spawnWinnerUIClientRpc(players[leastScoreIndex].GetComponentInChildren<TMP_Text>().text);
+                //reset all players
+                resetChasersServerRpc();
+                MovePlayersToSpawnsServerRpc();
+                return;
+            }
+            else{
+                Debug.Log("GameStarter: GameMode2: not everyone has played, waiting for next round");
+                betweenRounds=true;
+            }
+            
+            
+        }
+        else{
+
+            int nontagged=0;
+            for(int i=0;i<tagged.Length;i++){
+                if(!tagged[i]){
+                    nontagged++;
+                }
+            }
+            playerScores[currentChaserIndex]+=nontagged;
+
+        }
+           
+        
+
+
     }
 
+
+
+    float waitTime=2f;
+    float waittimeclock=0f;
+    bool waiting=false;
+
+    float betweenRoundTime=5f;
+    float betweenRoundTimeClock=0f;
+    bool betweenRounds=false;
+
+
+    //lists are related to each other
+    int currentChaserIndex=0;
+    GameObject[] players;
+    bool[] hasPlayed;
+    bool[] tagged;
+    int[] playerScores;
+    void StartGameMode2(){
+        players= GameObject.FindGameObjectsWithTag("Player");
+        Debug.Log("GameStarter: StartGameMode2: players.Length: "+players.Length);
+        hasPlayed=new bool[players.Length];
+        tagged=new bool[players.Length];
+        playerScores=new int[players.Length];
+        started.Value=true;
+        StartRoundGameMode2();
+
+    }
+
+    void StartRoundGameMode2(){
+        resetChasersServerRpc();
+        MovePlayersToSpawnsServerRpc();
+        //lock all players
+        LockPlayerClientRpc();
+        //select a random player to be the first chaser
+        currentChaserIndex=Random.Range(0,players.Length);
+        while(hasPlayed[currentChaserIndex]){
+            currentChaserIndex=Random.Range(0,players.Length);
+        }
+        hasPlayed[currentChaserIndex]=true;
+        waiting=true;
+        for(int i=0;i<players.Length;i++){
+            tagged[i]=false;
+        }
+        //set the player to be a chaser
+        players[currentChaserIndex].GetComponent<TagManager>().TagState.Value=ChaseState.Chaser;
+        tagged[currentChaserIndex]=true;
+    }
+
+
+
+
+
+    [ServerRpc(RequireOwnership = false)]
+    void MovePlayersToSpawnsServerRpc(){
+        players= GameObject.FindGameObjectsWithTag("Player");
+        //move each player to the a spawn point without using spawnpoints twice
+        List<int> usedIndexes=new List<int>();
+        foreach(GameObject player in players){
+            int index=Random.Range(0,spawnPoints.Length);
+            while(usedIndexes.Contains(index)){
+                index=Random.Range(0,spawnPoints.Length);
+            }
+            usedIndexes.Add(index);
+            string name= player.GetComponentInChildren<TMP_Text>().text;
+            Debug.Log("GameStarter: MovePlayersToSpawnsServerRpc: name: "+name);
+            MovePlayerClientRpc(index,name);
+        
+        }
+    }
+
+    [ClientRpc]
+    void MovePlayerClientRpc(int index,string name){
+        players= GameObject.FindGameObjectsWithTag("Player");
+        foreach(GameObject player in players){
+            if(player.GetComponent<NetworkObject>().IsOwner&&player.GetComponentInChildren<TMP_Text>().text==name){
+                player.GetComponentInChildren<FinalMove>().lockforframe=true;
+                player.transform.position=spawnPoints[index].position;
+                Debug.Log("GameStarter: MovePlayerClientRpc: moved player "+name+" to spawn point "+index);
+                
+                
+                return;
+            }
+            
+        }
+        Debug.Log("GameStarter: MovePlayerClientRpc: could not find player "+name);
+    }
+    [ClientRpc]
+    void MovePlayerClientRpc(Vector3 position,string name){
+        players= GameObject.FindGameObjectsWithTag("Player");
+        foreach(GameObject player in players){
+            if(player.GetComponent<NetworkObject>().IsOwner&&player.GetComponentInChildren<TMP_Text>().text==name){
+                player.GetComponentInChildren<FinalMove>().lockforframe=true;
+                player.transform.position=position;
+                break;
+            }
+        }
+    }
+    
+    
     void OnTriggerEnter(Collider other){
-        Debug.Log("GameStarter: OnTriggerEnter: entered");
+        
+     
         
         //if already started or the player is not the host
         if(started.Value||!IsServer){
             return;
         }
+        Debug.Log("GameStarter: OnTriggerEnter: game started");
+        string gamemode=currentgamemode.Value.ToString();
+        Debug.Log("GameStarter: OnTriggerEnter: gamemode: "+gamemode);
+        if(gamemode=="Chase"){
+            StartGameMode1();
+        }
+        else if(gamemode=="Elimination"){
+            StartGameMode2();
+            //MovePlayersToSpawnsServerRpc();
+        }
+
+    }
+
+
+
+
+    void StartGameMode1(){
         //get all objects with the player tag
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
         if(players.Length<1){
@@ -132,7 +346,7 @@ public class GameStarter : NetworkBehaviour
         //choose a random player to be the chaser
         int chaserIndex = Random.Range(0,players.Length);
         //set the chaser to be the chaser use serverrpc
-        players[chaserIndex].GetComponent<TagManager>().ChaserServerRpc();
+        players[chaserIndex].GetComponent<TagManager>().ChaserServerRpc(ChaseState.Chaser);
         //set the game to started
         Debug.Log("GameStarter: OnTriggerEnter: game started1");
         started.Value=true;
@@ -140,9 +354,31 @@ public class GameStarter : NetworkBehaviour
 
         //spawn the UI
         spawnUIClientRpc();
-
     }
 
+    
+
+
+    [ClientRpc]
+    public void LockPlayerClientRpc(){
+        //lock the player
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        foreach(GameObject player in players){
+            if(player.GetComponent<NetworkObject>().IsOwner){
+                player.GetComponentInChildren<FinalMove>().enabled=false;
+            }
+        }
+    }
+    [ClientRpc]
+    public void UnlockPlayerClientRpc(){
+        //unlock the player
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        foreach(GameObject player in players){
+            if(player.GetComponent<NetworkObject>().IsOwner){
+                player.GetComponentInChildren<FinalMove>().enabled=true;
+            }
+        }
+    }
     [ClientRpc]
     public void spawnUIClientRpc(){
         GameObject temp=Instantiate(UI);
@@ -155,25 +391,16 @@ public class GameStarter : NetworkBehaviour
         GameObject winnerScreen = Instantiate(WinnerScreen);
         winnerScreen.GetComponentInChildren<WinnerDisplayScript>().winner=leastTimePlayer+" won!";
     }
-    [ClientRpc]
-    public void resetChasersClientRpc(){
+    [ServerRpc]
+    public void resetChasersServerRpc(){
         //set all players to not be chasers
         GameObject[] players2 = GameObject.FindGameObjectsWithTag("Player");
         foreach(GameObject player in players2){
-            player.GetComponent<TagManager>().isChaser.Value=false;
+            player.GetComponent<TagManager>().TagState.Value=ChaseState.Runner;
         }
     }
 
-    [ServerRpc]
-    public void MovePlayerServerRpc(string name,Vector3 pos){
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-        foreach(GameObject player in players){
-            if(player.GetComponentInChildren<TMP_Text>().text==name){
-                player.transform.position=pos;
 
-            }
-        }
-    }
 
 
     //ownership not required
@@ -193,37 +420,33 @@ public class GameStarter : NetworkBehaviour
             GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
             foreach(GameObject player in players){
                 if(player.GetComponentInChildren<TMP_Text>().text==name1){
-                    player.GetComponent<TagManager>().ChaserServerRpc();
-                    Debug.Log("GameStarter: HandleCollisionServerRpc: player: "+name1+" is now a chaser");
+                    player.GetComponent<TagManager>().ChaserServerRpc(ChaseState.Runner);
+                    
                 }
             }
 
             foreach(GameObject player in players){
                 if(player.GetComponentInChildren<TMP_Text>().text==name2){
-                    player.GetComponent<TagManager>().ChaserServerRpc();
-                    Debug.Log("GameStarter: HandleCollisionServerRpc: player: "+name2+" is now a not a chaser");
+                    player.GetComponent<TagManager>().ChaserServerRpc(ChaseState.Chaser);
+                    
                 }
             }
             
         }
         else if(currentgamemode.Value.ToString()=="Elimination"){
-            //if the the player is not a chaser do nothing
-            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-            foreach(GameObject player in players){
-                if(player.GetComponentInChildren<TMP_Text>().text==name1){
-                    if(!player.GetComponent<TagManager>().isChaser.Value){
-                        return;
-                    }
+            //find the player that was tagged
+
+            //MovePlayersToSpawnsServerRpc();
+            for(int i=0;i<players.Length;i++){
+                if(players[i].GetComponentInChildren<TMP_Text>().text==name2){
+                    //set the player to be tagged
+                    players[i].GetComponent<TagManager>().TagState.Value=ChaseState.Chaser;
+                    //move the player to the oob
+                    MovePlayerClientRpc(OutPosition,players[i].GetComponentInChildren<TMP_Text>().text);
+                    tagged[i]=true;
+                    break;
                 }
             }
-            //if the player is a chaser move the other player to the out position
-            foreach(GameObject player in players){
-                if(player.GetComponentInChildren<TMP_Text>().text==name2){
-                    player.transform.position=OutPosition;
-                }
-            }
-
-
         }
         
     }
